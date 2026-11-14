@@ -38,10 +38,10 @@ their own polling and register-mapping behavior.
 
 - YelloByte ESP32-S3-ETH board
 - The board's Ethernet `INT` solder bridge must be closed for Ethernet operation
+- 2x TTL to RS485 module (e.g HZ-CP12006-B)
 - Huawei DTSU666-HW meter
 - GoodWe GW50K-ET10 inverter; the intended installation includes a BAT112
-- The required RS-485 interfaces/transceivers and suitable cabling for the
-  board and both devices
+- Suitable cabling for the board and both devices
 
 The firmware configures these UART pins and Modbus settings:
 
