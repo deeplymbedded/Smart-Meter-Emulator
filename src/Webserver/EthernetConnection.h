@@ -24,6 +24,7 @@ private:
     std::atomic<bool> started_;
     std::atomic<bool> linkUp_;
     std::atomic<bool> hasIp_;
+    std::atomic<bool> dhcpAddressObtained_;
     std::atomic<bool> fallbackConfigured_;
     std::atomic<uint32_t> linkUpTimestamp_;
 };

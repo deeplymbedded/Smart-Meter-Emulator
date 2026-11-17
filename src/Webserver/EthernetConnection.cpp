@@ -19,6 +19,7 @@ EthernetConnection::EthernetConnection()
       started_(false),
       linkUp_(false),
       hasIp_(false),
+      dhcpAddressObtained_(false),
       fallbackConfigured_(false),
       linkUpTimestamp_(0)
 {
@@ -62,19 +63,23 @@ void EthernetConnection::handle()
         return;
     }
 
-    if (hasIp_ || fallbackConfigured_ ||
+    if (hasIp_ || dhcpAddressObtained_ || fallbackConfigured_ ||
         millis() - linkUpTimestamp_.load() < DHCP_FALLBACK_DELAY_MS)
     {
         return;
     }
 
+    fallbackConfigured_ = true;
     if (configureFallbackAddress())
     {
-        fallbackConfigured_ = true;
         hasIp_ = true;
         GatewayDebug::printf(
             "Ethernet DHCP timed out; using fallback IP: %s\n",
             FALLBACK_IP.toString().c_str());
+    }
+    else
+    {
+        fallbackConfigured_ = false;
     }
 }
 
@@ -100,7 +105,10 @@ void EthernetConnection::handleEvent(arduino_event_id_t event)
     case ARDUINO_EVENT_ETH_GOT_IP:
         linkUp_ = true;
         hasIp_ = true;
-        fallbackConfigured_ = false;
+        if (!fallbackConfigured_)
+        {
+            dhcpAddressObtained_ = true;
+        }
         GatewayDebug::printf("Ethernet-IP: %s\n", ETH.localIP().toString().c_str());
         break;
     case ARDUINO_EVENT_ETH_DISCONNECTED:
